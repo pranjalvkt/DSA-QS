@@ -1,0 +1,15 @@
+static int prev = Integer.MIN_VALUE;
+  private static boolean isBST(Node root) {
+    if(root == null) return true;
+
+    boolean left = isBST(root.left);
+
+    boolean self = true;
+    if(root.data < prev) {
+      self = false;
+    } else {
+      prev = root.data;
+    }
+    boolean right = isBST(root.right);
+    return left && right && self;
+  }
