@@ -1,0 +1,19 @@
+public static class BPair {
+    boolean isBST = true;
+    int min = Integer.MAX_VALUE;
+    int max = Integer.MIN_VALUE;
+  }
+
+  public static BPair isValidBST(Node root) {
+    if(root == null) return new BPair();
+
+    BPair lp = isValidBST(root.left);
+    BPair rp = isValidBST(root.right);
+
+    BPair ans = new BPair();
+    ans.isBST = ((lp.max <= root.data) && (rp.min >= root.data)) && lp.isBST && rp.isBST;
+    ans.min = Math.min(root.data, lp.min);
+    ans.max = Math.max(root.data, rp.max);
+
+    return ans;
+  }
