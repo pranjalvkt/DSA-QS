@@ -1,2 +1,2 @@
-# LeetCode-Solution
-Collection of LeetCode questions to ace the coding interview!
+# DSA-Important Question Solution
+Collection of DSA questions to ace the coding interview!
