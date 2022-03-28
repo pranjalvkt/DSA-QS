@@ -15,17 +15,13 @@
  */
 class Solution {
     public TreeNode sortedArrayToBST(int[] nums) {
-        int mid =  nums.length/2;
-        TreeNode root = new TreeNode(nums[mid]);
-        root.left = createBST(nums,0, mid);
-        root.right = createBST(nums, mid+1, nums.length);
-        return root;
+        return createBST(nums, 0, nums.length-1);
     }
     private TreeNode createBST(int[] arr, int low, int high) {
-        if(low >= high) return null;
+        if(low > high) return null;
         int mid = (low + high)/2;
         TreeNode ans = new TreeNode(arr[mid]);
-        ans.left = createBST(arr, low, mid);
+        ans.left = createBST(arr, low, mid-1);
         ans.right = createBST(arr, mid + 1, high);
         return ans;
     }
