@@ -20,17 +20,19 @@ class Solution {
     }
     public TreeNode deleteNode(TreeNode root, int key) {
         if(root == null) return null;
+        
         if(root.val < key) {
           root.right = deleteNode(root.right, key);
         } else if(root.val > key) {
           root.left = deleteNode(root.left, key);
+            return root;
         } else {
-          //case1
+          //case1 --> LEAF NODE
           if(root.left == null && root.right == null) {
             return null;
           } 
 
-          //case2
+          //case2 --> ONLY ONE CHILD
           if(root.left == null) {
             return root.right;
           }
@@ -38,7 +40,7 @@ class Solution {
             return root.left;
           }
 
-          //case3
+          //case3 --> BOTH CHILD AVAILABLE
           int justSmaller = max(root.left);
           root.val = justSmaller;
           root.left = deleteNode(root.left, justSmaller);
