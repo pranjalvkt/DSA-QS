@@ -7,93 +7,130 @@ public class Main {
         // write your code here
         Scanner sc = new Scanner(System.in);
         int n = sc.nextInt();
-        int[] jumps = new int[n];
-        for (int i = 0; i < n; i++) {
-            jumps[i] = sc.nextInt();
+        int m = sc.nextInt();
+        int[][] maze = new int[n][m];
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < m; j++) {
+                maze[i][j] = sc.nextInt();
+            }
         }
 
         // RECURSIVE
-        // System.out.println(climb(0, n, jumps));
+        // System.out.println(minCost(0, 0, n, m, maze));
 
-        //MEMOIZATION
-        // int[] dp = new int[n+1];
-        // Arrays.fill(dp, Integer.MAX_VALUE);
-        // System.out.println(climb(0, n, jumps, dp));
 
+        // MEMOIZATION
+        // int[][] dp = new int[n][m];
+        // for (int i = 0; i < dp.length; i++) {
+        //     Arrays.fill(dp[i], Integer.MAX_VALUE);
+        // }
+        // System.out.println(minCost(0, 0, n, m, maze, dp));
 
         // TABULATION
-        int[] dp = new int[n+1];
-        Arrays.fill(dp, -1);
-        System.out.println(climb(n, jumps, dp));
+        // int[][] dp = new int[n][m];
+        // for (int i = 0; i < dp.length; i++) {
+        //     Arrays.fill(dp[i], Integer.MAX_VALUE);
+        // }
+        // System.out.println(minCost(n, m, maze, dp));
 
+        // TABULATION SPACE OPTIMISED
+        int[] dp = new int[m];
+        System.out.println(minCost(n, m, maze, dp));
     }
-    
-    // TABULATION
-    private static int climb(int n, int[] jumps, int[] dp) {
-        for(int idx = n; idx >= 0; idx--) {
-            if(idx == n) {
-                dp[idx] = 0;
-                continue;
-            }
 
-            int ans = Integer.MAX_VALUE;
-            for(int jump = 1; jump <= jumps[idx]; jump++) {
-                if(jump + idx <= n) {
-                    ans = Math.min(ans, dp[idx + jump]);
-                }
-            }
-
-            if(ans != Integer.MAX_VALUE) {
-                ans += 1;
-            }
-
-            dp[idx] = ans;
+    // TABULATION SPACE OPTIMISED
+    private static int minCost(int n, int m, int[][] maze, int[] dp) {
+        dp[m-1] = maze[n-1][m-1];
+        for( int c = m-2 ; c >= 0 ; c-- ) {
+            dp[c] = dp[c+1] + maze[n-1][c];
         }
-        
+
+        for (int r = n-2; r >= 0; r--) {
+            for (int c = m-1; c >= 0; c--) {
+                
+                int ans = Integer.MAX_VALUE;
+                if(r+1 <= n-1) {
+                    ans = Math.min(ans, dp[c]);
+                }
+                if(c+1 <= m-1) {
+                    ans = Math.min(ans, dp[c+1]);
+                }
+
+                dp[c] = (ans + maze[r][c]);
+            }
+        }
         return dp[0];
     }
 
+    // TABULATION
+    private static int minCost(int n, int m, int[][] maze, int[][] dp) {
+        for (int r = n-1; r >= 0; r--) {
+            for (int c = m-1; c >= 0; c--) {
+                if(r == n-1 && c == m-1) {
+                // ON BOTTOM RIGHT CELL
+                    dp[r][c] = maze[r][c];
+                    continue;
+                }
 
-    //MEMOIZATION
-    private static int climb(int idx, int n, int[] jumps, int[] dp) {
-        if(idx == n) {
-            dp[idx] = 0;
-            return 0;
+                if(dp[r][c] != Integer.MAX_VALUE) {
+                    return dp[r][c];
+                }
+
+                int ans = Integer.MAX_VALUE;
+                if(r+1 <= n-1) {
+                    ans = Math.min(ans, dp[r+1][c]);
+                }
+                if(c+1 <= m-1) {
+                    ans = Math.min(ans, dp[r][c+1]);
+                }
+
+                dp[r][c] = (ans + maze[r][c]);
+            }
+        }
+        return dp[0][0];
+    }
+
+    // MEMOIZATION
+    private static int minCost(int r, int c, int n, int m, int[][] maze, int[][] dp) {
+        if(r == n-1 && c == m-1) {
+            // ON BOTTOM RIGHT CELL
+            dp[r][c] = maze[r][c];
+            return maze[r][c];
         }
 
-        if(dp[idx] != Integer.MAX_VALUE) {
-            return dp[idx];
+        if(dp[r][c] != Integer.MAX_VALUE) {
+            return dp[r][c];
         }
 
         int ans = Integer.MAX_VALUE;
-        for(int jump = 1; jump <= jumps[idx]; jump++) {
-            if(jump + idx <= n) {
-                ans = Math.min(ans, climb(idx + jump, n, jumps));
-            }
+        if(r+1 <= n-1) {
+            ans = Math.min(ans, minCost(r+1, c, n, m, maze, dp));
+        }
+        if(c+1 <= m-1) {
+            ans = Math.min(ans, minCost(r, c+1, n, m, maze, dp));
         }
 
-        if(ans != Integer.MAX_VALUE) {
-            ans += 1;
-        }
-
-        return ans;
+        return dp[r][c] = (ans + maze[r][c]);
     }
+
+
 
     // RECURSIVE
-    private static int climb(int idx, int n, int[] jumps) {
-        if(idx == n) return 0;
+    private static int minCost(int r, int c, int n, int m, int[][] maze) {
+        if(r == n-1 && c == m-1) {
+            // ON BOTTOM RIGHT CELL
+            return maze[r][c];
+        }
 
         int ans = Integer.MAX_VALUE;
-        for(int jump = 1; jump <= jumps[idx]; jump++) {
-            if(jump + idx <= n) {
-                ans = Math.min(ans, climb(idx + jump, n, jumps));
-            }
+        if(r+1 <= n-1) {
+            ans = Math.min(ans, minCost(r+1, c, n, m, maze));
+        }
+        if(c+1 <= m-1) {
+            ans = Math.min(ans, minCost(r, c+1, n, m, maze));
         }
 
-        if(ans != Integer.MAX_VALUE) {
-            ans += 1;
-        }
-
-        return ans;
+        return ans + maze[r][c];
     }
+
 }
